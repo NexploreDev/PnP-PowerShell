@@ -1,5 +1,5 @@
 #Add-SPOField
-*Topic automatically generated on: 2015-07-21*
+*Topic automatically generated on: 2015-08-06*
 
 Adds a field to a list or as a site column
 ##Syntax
@@ -32,7 +32,7 @@ Parameter|Type|Required|Description
 |Group|String|False||
 |Id|GuidPipeBind|False||
 |InternalName|String|True||
-|List|ListPipeBind|False||
+|List|ListPipeBind|True||
 |Required|SwitchParameter|False||
 |Type|FieldType|True||
 |Web|WebPipeBind|False|The web to apply the command to. Omit this parameter to use the current web.|
@@ -45,4 +45,4 @@ This will add field of type Choice to a the list "Demo List".
 ###Example 2
     PS:>Add-SPOField -List "Demo list" -DisplayName "Speakers" -InternalName "SPSSpeakers" -Type MultiChoice -Group "Demo Group" -AddToDefaultView -Choices "Obiwan Kenobi","Darth Vader", "Anakin Skywalker"
 This will add field of type Multiple Choice to a the list "Demo List". (you can pick several choices for the same item)
-<!-- Ref: 833CACC5DE9E18826C5C0C54EB9AB9F7 -->
+<!-- Ref: D6F4CA632CF71363438BD82423CAD561 -->

@@ -490,11 +490,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         existingList.EnableVersioning = templateList.EnableVersioning;
                         isDirty = true;
                     }
-                    if (existingList.MajorVersionLimit != templateList.MaxVersionLimit)
-                    {
-                        existingList.MajorVersionLimit = templateList.MaxVersionLimit;
-                        isDirty = true;
-                    }
+                    //if (existingList.MajorVersionLimit != templateList.MaxVersionLimit)
+                    //{
+                    //    existingList.MajorVersionLimit = templateList.MaxVersionLimit;
+                    //    isDirty = true;
+                    //}
                     if (existingList.BaseTemplate == (int)ListTemplateType.DocumentLibrary)
                     {
                         // Only supported on Document Libraries
@@ -511,10 +511,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                         if (templateList.EnableMinorVersions)
                         {
-                            if (templateList.MinorVersionLimit != existingList.MajorWithMinorVersionsLimit)
-                            {
-                                existingList.MajorWithMinorVersionsLimit = templateList.MinorVersionLimit;
-                            }
+                            //if (templateList.MinorVersionLimit != existingList.MajorWithMinorVersionsLimit)
+                            //{
+                            //    existingList.MajorWithMinorVersionsLimit = templateList.MinorVersionLimit;
+                            //}
 
                             if (DraftVisibilityType.Approver ==
                                 (DraftVisibilityType)templateList.DraftVersionVisibility)
@@ -615,7 +615,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             createdList.EnableVersioning = list.EnableVersioning;
             if (list.EnableVersioning)
             {
-                createdList.MajorVersionLimit = list.MaxVersionLimit;
+                //createdList.MajorVersionLimit = list.MaxVersionLimit;
 
                 if (createdList.BaseTemplate == (int)ListTemplateType.DocumentLibrary)
                 {
@@ -625,7 +625,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     if (list.EnableMinorVersions)
                     {
-                        createdList.MajorWithMinorVersionsLimit = list.MinorVersionLimit; // Set only if enabled, otherwise you'll get exception due setting value to zero.
+                        //createdList.MajorWithMinorVersionsLimit = list.MinorVersionLimit; // Set only if enabled, otherwise you'll get exception due setting value to zero.
 
                         // DraftVisibilityType.Approver is available only when the EnableModeration option of the list is true
                         if (DraftVisibilityType.Approver ==
@@ -776,13 +776,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     TemplateFeatureID = item.TemplateFeatureId,
                     EnableAttachments = item.EnableAttachments,
                     OnQuickLaunch = item.OnQuickLaunch,
-                    MaxVersionLimit =
-                        item.IsObjectPropertyInstantiated("MajorVersionLimit") ? item.MajorVersionLimit : 0,
-                    EnableMinorVersions = item.EnableMinorVersions,
-                    MinorVersionLimit =
-                        item.IsObjectPropertyInstantiated("MajorWithMinorVersionsLimit")
-                            ? item.MajorWithMinorVersionsLimit
-                            : 0
+                    //MaxVersionLimit =
+                    //    item.IsObjectPropertyInstantiated("MajorVersionLimit") ? item.MajorVersionLimit : 0,
+                    EnableMinorVersions = item.EnableMinorVersions //,
+                    //MinorVersionLimit =
+                    //    item.IsObjectPropertyInstantiated("MajorWithMinorVersionsLimit")
+                    //        ? item.MajorWithMinorVersionsLimit
+                    //        : 0
                 };
                 var count = 0;
 

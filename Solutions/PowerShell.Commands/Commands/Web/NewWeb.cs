@@ -37,7 +37,7 @@ namespace OfficeDevPnP.PowerShell.Commands
             var web = SelectedWeb.CreateWeb(Title, Url, Description, Template, Locale, !BreakInheritance,InheritNavigation);
             ClientContext.Load(web, w => w.Id, w => w.Url);
             ClientContext.ExecuteQueryRetry();
-            WriteObject(web);
+            // WriteObject(web); // Causes Error write is not important!
         }
 
     }

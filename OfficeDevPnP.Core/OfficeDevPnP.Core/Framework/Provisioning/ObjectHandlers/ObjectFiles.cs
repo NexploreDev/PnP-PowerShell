@@ -31,85 +31,89 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var file in template.Files)
             {
-
-                var folderName = file.Folder.ToParsedString();
-
-                if (folderName.ToLower().StartsWith((web.ServerRelativeUrl.ToLower())))
+                // Exclude {themecatalog} files because they are SP default
+                if (!file.Folder.Contains("{themecatalog}"))
                 {
-                    folderName = folderName.Substring(web.ServerRelativeUrl.Length);
-                }
+                
+                    var folderName = file.Folder.ToParsedString();
 
-
-                var folder = web.EnsureFolderPath(folderName);
-
-                File targetFile = null;
-
-                var checkedOut = false;
-
-                targetFile = folder.GetFile(file.Src);
-
-                if (targetFile != null)
-                {
-                    if (file.Overwrite)
+                    if (folderName.ToLower().StartsWith((web.ServerRelativeUrl.ToLower())))
                     {
-                        checkedOut = CheckOutIfNeeded(web, targetFile);
+                        folderName = folderName.Substring(web.ServerRelativeUrl.Length);
+                    }
 
-                        using (var stream = template.Connector.GetFileStream(file.Src))
+
+                    var folder = web.EnsureFolderPath(folderName);
+
+                    File targetFile = null;
+
+                    var checkedOut = false;
+
+                    targetFile = folder.GetFile(file.Src);
+
+                    if (targetFile != null)
+                    {
+                        if (file.Overwrite)
                         {
-                            targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
+                            checkedOut = CheckOutIfNeeded(web, targetFile);
+
+                            using (var stream = template.Connector.GetFileStream(file.Src))
+                            {
+                                targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
+                            }
+                        }
+                        else
+                        {
+                            checkedOut = CheckOutIfNeeded(web, targetFile);
                         }
                     }
                     else
                     {
+                        using (var stream = template.Connector.GetFileStream(file.Src))
+                        {
+                            targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
+                        }
+
                         checkedOut = CheckOutIfNeeded(web, targetFile);
                     }
-                }
-                else
-                {
-                    using (var stream = template.Connector.GetFileStream(file.Src))
-                    {
-                        targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
-                    }
 
-                    checkedOut = CheckOutIfNeeded(web, targetFile);
-                }
-
-                if (targetFile != null)
-                {
-                    if (file.Properties != null && file.Properties.Any())
+                    if (targetFile != null)
                     {
-                        Dictionary<string, string> transformedProperties = file.Properties.ToDictionary(property => property.Key, property => property.Value.ToParsedString());
-                        targetFile.SetFileProperties(transformedProperties, false); // if needed, the file is already checked out
-                    }
-
-                    if (file.WebParts != null && file.WebParts.Any())
-                    {
-                        if (!targetFile.IsPropertyAvailable("ServerRelativeUrl"))
+                        if (file.Properties != null && file.Properties.Any())
                         {
-                            web.Context.Load(targetFile, f => f.ServerRelativeUrl);
-                            web.Context.ExecuteQuery();
+                            Dictionary<string, string> transformedProperties = file.Properties.ToDictionary(property => property.Key, property => property.Value.ToParsedString());
+                            targetFile.SetFileProperties(transformedProperties, false); // if needed, the file is already checked out
                         }
-                        var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
-                        foreach (var webpart in file.WebParts)
-                        {
-                            // check if the webpart is already set on the page
-                            if (existingWebParts.FirstOrDefault(w => w.WebPart.Title == webpart.Title) == null)
-                            {
-                                var wpEntity = new WebPartEntity();
-                                wpEntity.WebPartTitle = webpart.Title;
-                                wpEntity.WebPartXml = webpart.Contents.ToParsedString().Trim(new[] { '\n', ' ' });
-                                wpEntity.WebPartZone = webpart.Zone;
-                                wpEntity.WebPartIndex = (int) webpart.Order;
 
-                                web.AddWebPartToWebPartPage(targetFile.ServerRelativeUrl, wpEntity);
+                        if (file.WebParts != null && file.WebParts.Any())
+                        {
+                            if (!targetFile.IsPropertyAvailable("ServerRelativeUrl"))
+                            {
+                                web.Context.Load(targetFile, f => f.ServerRelativeUrl);
+                                web.Context.ExecuteQuery();
+                            }
+                            var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
+                            foreach (var webpart in file.WebParts)
+                            {
+                                // check if the webpart is already set on the page
+                                if (existingWebParts.FirstOrDefault(w => w.WebPart.Title == webpart.Title) == null)
+                                {
+                                    var wpEntity = new WebPartEntity();
+                                    wpEntity.WebPartTitle = webpart.Title;
+                                    wpEntity.WebPartXml = webpart.Contents.ToParsedString().Trim(new[] { '\n', ' ' });
+                                    wpEntity.WebPartZone = webpart.Zone;
+                                    wpEntity.WebPartIndex = (int) webpart.Order;
+
+                                    web.AddWebPartToWebPartPage(targetFile.ServerRelativeUrl, wpEntity);
+                                }
                             }
                         }
-                    }
                   
-                    if (checkedOut)
-                    {
-                        targetFile.CheckIn("", CheckinType.MajorCheckIn);
-                        web.Context.ExecuteQueryRetry();
+                        if (checkedOut)
+                        {
+                            targetFile.CheckIn("", CheckinType.MajorCheckIn);
+                            web.Context.ExecuteQueryRetry();
+                        }
                     }
                 }
 

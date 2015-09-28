@@ -4,6 +4,7 @@ using OfficeDevPnP.PowerShell.Commands.Base.PipeBinds;
 using Microsoft.SharePoint.Client;
 using System.Management.Automation;
 using OfficeDevPnP.PowerShell.CmdletHelpAttributes;
+using System;
 
 namespace OfficeDevPnP.PowerShell.Commands
 {
@@ -80,7 +81,7 @@ namespace OfficeDevPnP.PowerShell.Commands
                 item.Update();
                 ClientContext.Load(item);
                 ClientContext.ExecuteQueryRetry();
-                WriteObject(item);
+                //WriteObject(item); // Do nothing because write is not important!
             }
         }
     }

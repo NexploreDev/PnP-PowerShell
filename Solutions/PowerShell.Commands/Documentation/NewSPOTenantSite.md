@@ -1,5 +1,5 @@
 #New-SPOTenantSite
-*Topic automatically generated on: 2015-07-31*
+*Topic automatically generated on: 2015-08-06*
 
 Creates a new site collection for the current tenant
 ##Syntax

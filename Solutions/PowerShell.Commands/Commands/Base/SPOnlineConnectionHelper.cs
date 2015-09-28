@@ -111,6 +111,10 @@ namespace OfficeDevPnP.PowerShell.Commands.Base
             ClientContext context = new ClientContext(url.AbsoluteUri);
             context.ApplicationName = Properties.Resources.ApplicationName;
             context.RequestTimeout = requestTimeout;
+
+            context.ExecutingWebRequest += new EventHandler<WebRequestEventArgs>(ctx_MixedAuthRequest);
+
+
             if (!currentCredentials)
             {
                 try
@@ -169,6 +173,13 @@ namespace OfficeDevPnP.PowerShell.Commands.Base
                 }
             }
             return new SPOnlineConnection(context, connectionType, minimalHealthScore, retryCount, retryWait, credentials, url.ToString());
+        }
+
+        private static void ctx_MixedAuthRequest(object sender, WebRequestEventArgs e)
+        {
+            //Add the header that tells SharePoint to use Windows authentication.
+            e.WebRequestExecutor.RequestHeaders.Add(
+            "X-FORMS_BASED_AUTH_ACCEPTED", "f");
         }
 
         internal static SPOnlineConnection InstantiateAdfsConnection(Uri url, PSCredential credentials, PSHost host, int minimalHealthScore, int retryCount, int retryWait, int requestTimeout, bool skipAdminCheck = false)
